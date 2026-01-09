@@ -5,7 +5,8 @@ import os
 from tqdm import tqdm
 from utils_compute_stats import compute_average_brightness
 
-def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_images_x=400, output_path='generated_ascii_art_image.png'):
+def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_images_x=400, 
+                       output_path='generated_ascii_art_image.png',plot_enabled =True, save_enabled=True):
     """
     Generate ASCII art from a given image path.
     
@@ -28,11 +29,7 @@ def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_imag
     print(f'Input image dimensions: {width}x{height}')
     
     # Read in ASCII image and get their dimensions
-    path_to_ascii = 'ascii_images/ascii_032_space.png'
-    ascii_image_sample = cv2.imread(path_to_ascii, cv2.IMREAD_GRAYSCALE)
-    ascii_image_height, ascii_image_width = ascii_image_sample.shape
-    ascii_aspect_ratio = ascii_image_width / ascii_image_height
-    print(f'ASCII image dimensions: {ascii_image_width}x{ascii_image_height}, aspect ratio: {ascii_aspect_ratio:.2f}')
+    ascii_aspect_ratio = get_aspect_ratio_of_ascii_image()
 
     # Calculate sub-image dimensions
     size_sub_image_x = width // num_sub_images_x
@@ -46,14 +43,7 @@ def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_imag
     sorted_brightness = sorted(average_brightness.items(), key=lambda x: x[1])
     
     # Preload and pre-scale all ASCII images for better performance
-    print("Preloading and scaling ASCII images...")
-    ascii_images_cache = {}
-    for filename, brightness in tqdm(average_brightness.items(), desc="Loading ASCII images"):
-        ascii_image_path = os.path.join(ascii_images_dir, filename)
-        ascii_image = cv2.imread(ascii_image_path, cv2.IMREAD_GRAYSCALE)
-        # Pre-resize to standard size
-        ascii_image_resized = cv2.resize(ascii_image, (size_sub_image_x, size_sub_image_y))
-        ascii_images_cache[filename] = ascii_image_resized
+    ascii_images_cache = preload_ascii_images(ascii_images_dir, size_sub_image_x, size_sub_image_y, average_brightness)
     
     # Create empty ASCII art image with same dimensions as input
     ascii_art_image = np.zeros((height, width), dtype=np.uint8)
@@ -86,26 +76,51 @@ def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_imag
             # Place the (possibly cropped) ASCII image into the final image
             ascii_art_image[start_y:end_y, start_x:end_x] = ascii_image_cropped
     
-    # Save the generated ASCII art
-    cv2.imwrite(output_path, ascii_art_image)
-    print(f'ASCII art saved to: {output_path}')
-    
-    # Display the result
-    plt.figure(figsize=(12, 8))
-    plt.subplot(1, 2, 1)
-    plt.imshow(gray_image, cmap='gray')
-    plt.axis('off')
-    
-    plt.subplot(1, 2, 2)
-    plt.imshow(ascii_art_image, cmap='gray')
-    plt.axis('off')
-    plt.tight_layout()
-    plt.show()
+    if save_enabled:
+        # Save the generated ASCII art
+        cv2.imwrite(output_path, ascii_art_image)
+        print(f'ASCII art saved to: {output_path}')
+
+    if plot_enabled:
+        # Display the result
+        plt.figure(figsize=(12, 8))
+        plt.subplot(1, 2, 1)
+        plt.imshow(gray_image, cmap='gray')
+        plt.axis('off')
+        
+        plt.subplot(1, 2, 2)
+        plt.imshow(ascii_art_image, cmap='gray')
+        plt.axis('off')
+        plt.tight_layout()
+        plt.show()
     
     return ascii_art_image
 
+
+def get_aspect_ratio_of_ascii_image():
+    # Read in ASCII image and get their dimensions
+    path_to_ascii = 'ascii_images'
+    print(os.listdir(path_to_ascii)[0])
+    ascii_image_sample = cv2.imread(os.path.join(path_to_ascii, os.listdir(path_to_ascii)[1]), cv2.IMREAD_GRAYSCALE)
+    ascii_image_height, ascii_image_width = ascii_image_sample.shape
+    ascii_aspect_ratio = ascii_image_width / ascii_image_height
+    print(f'ASCII image dimensions: {ascii_image_width}x{ascii_image_height}, aspect ratio: {ascii_aspect_ratio:.2f}')
+    return ascii_aspect_ratio
+
+def preload_ascii_images(ascii_images_dir, size_sub_image_x, size_sub_image_y, average_brightness):
+    # Preload and pre-scale all ASCII images for better performance
+    print("Preloading and scaling ASCII images...")
+    ascii_images_cache = {}
+    for filename, brightness in tqdm(average_brightness.items(), desc="Loading ASCII images"):
+        ascii_image_path = os.path.join(ascii_images_dir, filename)
+        ascii_image = cv2.imread(ascii_image_path, cv2.IMREAD_GRAYSCALE)
+        # Pre-resize to standard size
+        ascii_image_resized = cv2.resize(ascii_image, (size_sub_image_x, size_sub_image_y))
+        ascii_images_cache[filename] = ascii_image_resized
+    return ascii_images_cache
+
 # Example usage - you can uncomment and modify the path as needed
-# image_path = r'c:\Users\janni\OneDrive\4dhdajyv6\004_J6G-PTH-HWY-5_1758897788541.jpg'
+# image_path = r'path_to_your_image.jpg'
 # ascii_art = generate_ascii_art(image_path)
 if __name__ == "__main__":
     # Example usage - replace with your desired image path
@@ -115,6 +130,6 @@ if __name__ == "__main__":
     ascii_art = generate_ascii_art(
         image_path=image_path,
         ascii_images_dir='ascii_images',
-        num_sub_images_x=500,
+        num_sub_images_x=200,
         output_path='generated_ascii_art_image.png'
     )
