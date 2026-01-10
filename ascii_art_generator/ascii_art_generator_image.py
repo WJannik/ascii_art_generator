@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
-from ascii_art_generator.utils_ascii import generate_ascii_images
+from utils_ascii import generate_ascii_images
 from utils_compute_stats import compute_average_brightness
 
 def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_images_x=200, kernel_size=3, iterations=4,
@@ -125,13 +125,15 @@ def preload_ascii_images(ascii_images_dir, size_sub_image_x, size_sub_image_y, a
 # image_path = r'path_to_your_image.jpg'
 # ascii_art = generate_ascii_art(image_path)
 if __name__ == "__main__":
-    # Example usage - replace with your desired image path
-    image_path = r'test_image.jpg'
-    
-    # Generate ASCII art with default settings
-    ascii_art = generate_ascii_art(
-        image_path=image_path,
-        ascii_images_dir='ascii_images',
-        num_sub_images_x=200,
-        output_path='generated_ascii_art_image.png'
-    )
+    print(os.listdir('./test_images'))
+    for image_path in os.listdir('./test_images'):
+        if image_path.endswith('.jpg') or image_path.endswith('.png'):
+            print(f'Generating ASCII art for image: {image_path}')
+            ascii_art = generate_ascii_art(
+                image_path=os.path.join('./test_images', image_path),
+                ascii_images_dir='ascii_images',
+                num_sub_images_x=200,
+                output_path=f'test_results/generated_ascii_art_{os.path.splitext(image_path)[0]}.png',
+                plot_enabled=False,
+                save_enabled=True
+            )
