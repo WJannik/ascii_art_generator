@@ -1,2 +1,4 @@
 test_image.jpg
 ascii_images/*
+*.pyc
+*/__pycache__/

@@ -1,3 +1,6 @@
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
+
 def get_ascii_char(number):
     """
     Convert an integer (0-127) to its ASCII character.
@@ -33,9 +36,7 @@ def get_ascii_code(character):
     return code
 
 
-from PIL import Image, ImageDraw, ImageFont
-
-def monospace_char_image(char, font_size=120, out_path="char.png", fixed_size=None):
+def monospace_char_image(char, font_name = None, font_size=32, out_path="char.png", fixed_size=None):
     """
     Create an image of a single ASCII character using a monospace font.
     All images will have the same dimensions for consistency.
@@ -77,13 +78,16 @@ def monospace_char_image(char, font_size=120, out_path="char.png", fixed_size=No
             "C:/Windows/Fonts/cour.ttf",     # Windows system path
             "C:/Windows/Fonts/consola.ttf",  # Windows Consolas
         ]
-        # Pick random font from the list
+
         font = None
-        font_name = monospace_fonts[0]
+        # Pick random font from the list if font_name is not provided
+        if font_name is None:
+            font_name = np.random.choice(monospace_fonts)
         try:
             font = ImageFont.truetype(font_name, size=font_size)
             print(f"Using font: {font_name}")
         except (OSError, IOError):
+            print(f"Could not load font '{font_name}'. Trying default monospace font.")
             pass
         
         # If no TrueType font found, use default
@@ -102,7 +106,7 @@ def monospace_char_image(char, font_size=120, out_path="char.png", fixed_size=No
             max_h = test_bbox[3] - test_bbox[1]
             
             # Add padding for consistent appearance
-            padding = 20
+            padding = 0
             fixed_size = (max_w + padding, max_h + padding)
 
         # Create image with fixed dimensions
@@ -110,7 +114,6 @@ def monospace_char_image(char, font_size=120, out_path="char.png", fixed_size=No
         draw = ImageDraw.Draw(img)
         
         # Calculate center position for the text
-        # For proper centering, we need to account for the text's baseline
         center_x = fixed_size[0] // 2
         center_y = fixed_size[1] // 2
         
@@ -118,9 +121,7 @@ def monospace_char_image(char, font_size=120, out_path="char.png", fixed_size=No
         bbox = draw.textbbox((0, 0), char, font=font)
         text_width = bbox[2] - bbox[0]
         text_height = bbox[3] - bbox[1]
-        
-        # Calculate the top-left position to center the text
-        # We need to offset by half the text dimensions and account for the bbox offset
+        # Offset by half the text dimensions and account for the bbox offset
         x = center_x - text_width // 2 - bbox[0]
         y = center_y - text_height // 2 - bbox[1]
         
@@ -136,7 +137,7 @@ def monospace_char_image(char, font_size=120, out_path="char.png", fixed_size=No
         return None
 
 
-def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images", font_size=15):
+def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images", font_name = None, font_size=32):
     """
     Generate images for a range of ASCII characters.
     All images will have consistent dimensions.
@@ -165,13 +166,15 @@ def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images"
         ]
         
         font = None
-        for font_name in monospace_fonts:
-            try:
-                font = ImageFont.truetype(font_name, size=font_size)
-                break
-            except (OSError, IOError):
-                continue
-        
+        # Pick random font from the list if font_name is not provided
+        if font_name is None:
+            font_name = np.random.choice(monospace_fonts)
+        try:
+            font = ImageFont.truetype(font_name, size=font_size)
+            print(f"Using font: {font_name}")
+        except (OSError, IOError):
+            print(f"Could not load font '{font_name}'. Trying default monospace font.")
+            pass
         if font is None:
             font = ImageFont.load_default()
         
@@ -188,7 +191,7 @@ def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images"
         
     except Exception as e:
         print(f"Error calculating fixed size: {e}")
-        fixed_size = (140, 140)  # Fallback size
+        fixed_size = (32, 32)  # Fallback size
     
     # Generate images with consistent size
     for code in range(start_code, end_code + 1):
@@ -203,7 +206,7 @@ def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images"
             
         filepath = os.path.join(output_dir, filename)
         print(f"Generating image for ASCII {code} ('{char}') -> {filename}")
-        monospace_char_image(char, font_size=font_size, out_path=filepath, fixed_size=fixed_size)
+        monospace_char_image(char, font_name=font_name, font_size=font_size, out_path=filepath, fixed_size=fixed_size)
 
 
 if __name__ == "__main__":
