@@ -4,10 +4,8 @@ from PIL import Image, ImageDraw, ImageFont
 def get_ascii_char(number):
     """
     Convert an integer (0-127) to its ASCII character.
-    
     Args:
         number: Integer from 0 to 127
-    
     Returns:
         The corresponding ASCII character as a string
     """
@@ -19,10 +17,8 @@ def get_ascii_char(number):
 def get_ascii_code(character):
     """
     Convert a single ASCII character to its integer code (0-127).
-    
     Args:
         character: A single ASCII character string
-    
     Returns:
         The corresponding ASCII integer code
     """
@@ -127,7 +123,7 @@ def monospace_char_image(char, font_name = None, font_size=32, out_path="char.pn
         
         # Draw the character centered in the image
         draw.text((x, y), char, fill="black", font=font)
-
+        # Save the image 
         img.save(out_path)
         return img
     
@@ -141,11 +137,11 @@ def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images"
     """
     Generate images for a range of ASCII characters.
     All images will have consistent dimensions.
-    
     Args:
         start_code: Starting ASCII code (default 32, space)
         end_code: Ending ASCII code (default 126, ~)
         output_dir: Directory to save images (default "ascii_images")
+        font_name: Name of the font to use (default None, random monospace font)
         font_size: Font size to use for all characters
     """
     import os
@@ -157,12 +153,7 @@ def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images"
     try:
         # Load the same font that will be used for characters (use same list as main function)
         monospace_fonts = [
-            "cour.ttf", "Courier New.ttf", "consola.ttf", "Consolas.ttf", 
-            "lucon.ttf", "Lucida Console.ttf", "DejaVuSansMono.ttf", 
-            "DejaVu Sans Mono.ttf", "LiberationMono-Regular.ttf",
-            "FiraCode-Regular.ttf", "JetBrainsMono-Regular.ttf",
-            "SourceCodePro-Regular.ttf", "Monaco.ttf", "Menlo.ttf", "courier.ttf",
-            "C:/Windows/Fonts/cour.ttf", "C:/Windows/Fonts/consola.ttf"
+            "cour.ttf", "Courier New.ttf", "consola.ttf", "Consolas.ttf"
         ]
         
         font = None
@@ -187,7 +178,6 @@ def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images"
         padding = 0
         fixed_size = (max_w + padding, max_h + padding)
         
-        print(f"Using fixed image size: {fixed_size[0]}x{fixed_size[1]} pixels")
         
     except Exception as e:
         print(f"Error calculating fixed size: {e}")
