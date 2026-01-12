@@ -4,13 +4,16 @@ A Python-based ASCII art generator that converts images and videos into beautifu
 
 ## Quick Start
 
-**New to ASCII art generation?** Check out our [Interactive Jupyter Tutorial](ascii_art_tutorial.ipynb) for hands-on examples and step-by-step guidance!
-
+As an example, here is an input image and its corresponding ASCII art output:
 <div align="center">
-  <img src="output/surrealismus_ascii_art.png" alt="ASCII Art Example" width="400"/>
+  <img src="example_images/surrealismus.jpg" alt="ASCII Art Example" width="500"/>
 </div>
 
-Further exmaples of generated ASCII art can be found in the `output/` directory. This also includes a video output example (due to size there is only a short clip).
+<div align="center">
+  <img src="output/surrealismus_ascii_art.png" alt="ASCII Art Example" width="500"/>
+</div>
+
+Further exmaples of generated ASCII art can be found in the `output/` directory. This also includes a video output example (due to size there is only a short clip). **New to ASCII art generation?** Check out the [Jupyter Tutorial](ascii_art_tutorial.ipynb) for hands-on examples.
 
 ## How It Works
 
