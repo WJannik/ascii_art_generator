@@ -3,8 +3,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
-from utils_ascii import generate_ascii_images
-from utils_compute_stats import compute_average_brightness
+
+# Handle both relative and absolute imports
+try:
+    from .utils_ascii import generate_ascii_images
+    from .utils_compute_stats import compute_average_brightness
+except ImportError:
+    from utils_ascii import generate_ascii_images
+    from utils_compute_stats import compute_average_brightness
 
 def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_images_width=200, kernel_size=3, iterations=4,
                        output_path='generated_ascii_art_image.png',plot_enabled =True, save_enabled=True, generate_ascii_images_flag=False):
@@ -83,17 +89,17 @@ def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_imag
     if save_enabled:
         # Save the generated ASCII art
         cv2.imwrite(output_path, ascii_art_image)
-        print(f'ASCII art saved to: {output_path}')
 
     if plot_enabled:
         # Display the result
-        plt.figure(figsize=(12, 8))
         plt.subplot(1, 2, 1)
-        plt.imshow(gray_image, cmap='gray')
+        plt.imshow(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), cmap=None)
+        plt.title('Original Image')
         plt.axis('off')
         
         plt.subplot(1, 2, 2)
         plt.imshow(ascii_art_image, cmap='gray')
+        plt.title('Generated ASCII Art')
         plt.axis('off')
         plt.tight_layout()
         plt.show()
@@ -104,7 +110,7 @@ def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_imag
 def get_aspect_ratio_of_ascii_image():
     """ Compute the aspect ratio of ASCII character images by dividing width by height. """
     # Read in ASCII image and get their dimensions
-    path_to_ascii = 'ascii_images'
+    path_to_ascii = 'ascii_art_generator\\ascii_images'
     ascii_image_sample = cv2.imread(os.path.join(path_to_ascii, os.listdir(path_to_ascii)[1]), cv2.IMREAD_GRAYSCALE)
     ascii_image_height, ascii_image_width = ascii_image_sample.shape
     ascii_aspect_ratio = ascii_image_width / ascii_image_height
@@ -135,15 +141,15 @@ def preload_ascii_images(ascii_images_dir, size_sub_image_width, size_sub_image_
 # ascii_art = generate_ascii_art(image_path)
 
 if __name__ == "__main__":
-    # Apply ASCII art generation for some sample images stored in './test_images' directory
-    for image_path in os.listdir('./test_images'):
+    # Apply ASCII art generation for some sample images stored in './example_images' directory
+    for image_path in os.listdir('./example_images'):
         if image_path.endswith('.jpg') or image_path.endswith('.png'):
             print(f'Generating ASCII art for image: {image_path}')
             ascii_art = generate_ascii_art(
-                image_path=os.path.join('./test_images', image_path),
-                ascii_images_dir='ascii_images',
-                num_sub_images_width=200,
-                output_path=f'test_results/generated_ascii_art_{os.path.splitext(image_path)[0]}.png',
+                image_path=os.path.join('./example_images', image_path),
+                ascii_images_dir='ascii_art_generator\\ascii_images',
+                num_sub_images_width=150,
+                output_path=f'./output/generated_ascii_art_{os.path.splitext(image_path)[0]}.png',
                 plot_enabled=False,
                 save_enabled=True
             )

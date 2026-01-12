@@ -2,7 +2,12 @@ import cv2
 import numpy as np
 import os
 from tqdm import tqdm
-from ascii_art_generator_image import generate_ascii_art
+
+# Handle both relative and absolute imports
+try:
+    from .ascii_art_generator_image import generate_ascii_art
+except ImportError:
+    from ascii_art_generator_image import generate_ascii_art
 
 def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_images_width=100):
     """
@@ -23,7 +28,7 @@ def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_imag
     # Generate ASCII art using existing function
     ascii_art = generate_ascii_art(
         image_path=temp_frame_path,
-        ascii_images_dir='ascii_images',
+        ascii_images_dir='ascii_art_generator\\ascii_images',
         num_sub_images_width=num_sub_images_width,
         output_path=temp_ascii_path,
         plot_enabled=False,
@@ -34,7 +39,7 @@ def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_imag
     return ascii_art
 
 def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, end_time=None, 
-                          num_sub_images_width=100, speed_multiplier=1.0, ascii_images_dir="ascii_images"):
+                          num_sub_images_width=100, speed_multiplier=1.0, ascii_images_dir="ascii_art_generator\\ascii_images"):
     """
     Convert a video to ASCII art video.
     Args:
@@ -44,7 +49,7 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
         end_time (float): End time in seconds (default: None - full video)
         num_sub_images_width (int): ASCII resolution - lower = more pixelated, higher = more detailed (default: 100)
         speed_multiplier (float): Speed multiplier - 1.0 = normal, 2.0 = 2x speed, 0.5 = slow motion (default: 1.0)
-        ascii_images_dir (str): Directory containing ASCII character images (default: "ascii_images")
+        ascii_images_dir (str): Directory containing ASCII character images (default: "ascii_art_generator\\ascii_images")
     Returns:
         bool: True if successful, False otherwise
     """
@@ -146,17 +151,19 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
 # Example usage
 if __name__ == "__main__":
     # Example 1: Convert entire video with default settings
-    input_video = r"c:\Users\janni\OneDrive\jannik_kraxelt.mp4"
-    output_video = r"c:\Users\janni\OneDrive\jannik_kraxelt_ascii.mp4"
-    
+    input_video = r"example_videos\7098041-uhd_3840_2160_30fps.mp4"
+    output_video = r"output\7098041-uhd_3840_2160_30fps_ascii.mp4"
+    input_video = r"example_videos\2795731-uhd_3840_2160_25fps.mp4"
+    output_video = r"output\2795731-uhd_3840_2160_25fps_ascii.mp4"
+
     success = convert_video_to_ascii(
          input_video_path=input_video,
          output_video_path=output_video,
          start_time=0.0,          # Start at 0 seconds
-         end_time=10.0,            # End at 10 seconds
-         num_sub_images_width=100,   
-         speed_multiplier=10.0,
-         ascii_images_dir="ascii_images")
+         end_time=None,            # End at end of video
+         num_sub_images_width=15,   
+         speed_multiplier=1.0,
+         ascii_images_dir="ascii_art_generator\\ascii_images")
     if success:
         print("Video conversion successful!")
     else:
