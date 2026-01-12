@@ -1,30 +1,16 @@
 # ASCII Art Generator
 
-A Python-based ASCII art generator that converts images and videos into beautiful ASCII art representations using individual character images.
+A Python-based ASCII art generator that converts images and videos into beautiful ASCII art representations using individual character images. Enjoy transforming your media into text-based art!
 
 ## Quick Start
 
 **New to ASCII art generation?** Check out our [Interactive Jupyter Tutorial](ascii_art_tutorial.ipynb) for hands-on examples and step-by-step guidance!
 
 <div align="center">
-  <img src="output/village_image.png" alt="ASCII Art Example" width="400"/>
+  <img src="output/surrealismus_ascii_art.png" alt="ASCII Art Example" width="400"/>
 </div>
 
-*High-resolution ASCII art generated from an original image*
-
-## Animated Examples
-
-GIFs are fully supported in markdown and work great on GitHub pages! Here's how to showcase animated ASCII art:
-
-### Video to ASCII Art Demo
-```markdown
-![ASCII Video Demo](assets/ascii_video_demo.gif)
-```
-
-<div align="center">
-  <img src="assets/ascii_video_demo.gif" alt="ASCII Video Demo" width="600"/>
-  <br><em>Animated ASCII art video conversion</em>
-</div>
+Further exmaples of generated ASCII art can be found in the `output/` directory. This also includes a video output example (due to size there is only a short clip).
 
 ## How It Works
 
@@ -34,33 +20,6 @@ The generator works by:
 3. **Image Segmentation**: Divides input images into small sub-regions
 4. **Character Matching**: Maps each sub-region to the ASCII character with the closest brightness
 5. **Art Assembly**: Combines all ASCII character images to create the final ASCII art
-
-## Installation
-
-### Option 1: Install as a Python Package (Recommended)
-
-```bash
-# Install in development mode
-pip install -e .
-
-# Or install directly from the repository
-pip install git+https://github.com/yourusername/ascii_art_generator.git
-```
-
-### Option 2: Manual Installation
-
-Make sure you have Python 3.7+ installed, then install dependencies:
-
-```bash
-pip install opencv-python numpy matplotlib pillow tqdm
-```
-
-### Option 3: For Jupyter Notebook Users
-
-```bash
-# Install with notebook extras
-pip install -e .[notebook]
-```
 
 ## Usage
 
@@ -90,13 +49,6 @@ success = convert_video_to_ascii(
 ### Interactive Tutorial
 
 **For detailed examples and step-by-step guidance, check out our [Interactive Jupyter Tutorial](ascii_art_tutorial.ipynb)!**
-
-The tutorial covers:
-- Setting up the module
-- Image to ASCII art conversion
-- Video to ASCII art conversion  
-- Parameter optimization
-- Best practices and tips
 
 ### Setup
 
@@ -130,18 +82,10 @@ ascii_art_generator/
 └── output/                            # Generated ASCII art output
 ```
 
-## File Descriptions
-
-- **ascii_art_generator_image.py**: Core image-to-ASCII conversion functionality
-- **ascii_art_generator_video.py**: Video processing and frame-by-frame ASCII conversion
-- **utils_ascii.py**: Utilities for generating and handling ASCII character images
-- **utils_compute_stats.py**: Functions for analyzing brightness and coverage of ASCII characters
-
 ## Tips for Best Results
 
 1. **Image Selection**: High-contrast images work best
 2. **Resolution**: Start with `num_sub_images_width=100-200` for testing
-3. **Video Processing**: Lower resolutions (50-100) process much faster for videos
-4. **Character Enhancement**: Increase `kernel_size` and `iterations` for bold images
-5. **Performance**: Video processing can be slow; consider shorter clips or lower resolution for testing
+3. **Character Enhancement**: Increase `kernel_size` and `iterations` for to finetune the matching of the characters.
+4. **Performance**: Video processing can be slow; consider shorter clips rather than long videos.
 
