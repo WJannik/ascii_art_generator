@@ -26,7 +26,6 @@ The generator works by:
 ### As a Python Module
 
 ```python
-# Import the module
 import ascii_art_generator
 from ascii_art_generator import generate_ascii_art, convert_video_to_ascii
 
@@ -86,6 +85,6 @@ ascii_art_generator/
 
 1. **Image Selection**: High-contrast images work best
 2. **Resolution**: Start with `num_sub_images_width=100-200` for testing
-3. **Character Enhancement**: Increase `kernel_size` and `iterations` for to finetune the matching of the characters.
+3. **Character Enhancement**: Increase `kernel_size` and `iterations` to finetune the matching of the characters.
 4. **Performance**: Video processing can be slow; consider shorter clips rather than long videos.
 
