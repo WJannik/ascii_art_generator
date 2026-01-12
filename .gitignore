@@ -1,6 +1,2 @@
-test_image.jpg
-example_images/*.jpg
-example_images/*.png
-example_videos/*.mp4
 *.pyc
 */__pycache__/
