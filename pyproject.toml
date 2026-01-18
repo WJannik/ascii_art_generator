@@ -1,0 +1,20 @@
+[project]
+name = "ascii_art_generator"
+version = "0.1.0"
+description = "ascii_art_generator"
+readme = "README.md"
+requires-python = ">=3.11"
+
+# Dependencies managed by uv
+dependencies = [
+    "opencv-python>=4.0.0",
+    "numpy>=1.20.0",
+    "matplotlib>=3.0.0",
+    "pillow>=8.0.0",
+    "tqdm>=4.0.0",
+    "pytest>=6.0.0",
+]
+
+[tool.uv]
+# Optional: tell uv to use the current environment
+package = true
