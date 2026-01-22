@@ -110,7 +110,9 @@ def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_imag
 def get_aspect_ratio_of_ascii_image():
     """ Compute the aspect ratio of ASCII character images by dividing width by height. """
     # Read in ASCII image and get their dimensions
-    path_to_ascii = 'ascii_art_generator\\ascii_images'
+    import os
+    current_dir = os.path.dirname(__file__)
+    path_to_ascii = os.path.join(current_dir, 'ascii_images')
     ascii_image_sample = cv2.imread(os.path.join(path_to_ascii, os.listdir(path_to_ascii)[1]), cv2.IMREAD_GRAYSCALE)
     ascii_image_height, ascii_image_width = ascii_image_sample.shape
     ascii_aspect_ratio = ascii_image_width / ascii_image_height

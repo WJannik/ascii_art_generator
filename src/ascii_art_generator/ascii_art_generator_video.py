@@ -9,7 +9,7 @@ try:
 except ImportError:
     from ascii_art_generator_image import generate_ascii_art
 
-def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_images_width=100):
+def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_images_width=100, ascii_images_dir=None):
     """
     Convert a single video frame to ASCII art using the existing generate_ascii_art function.
     
@@ -18,17 +18,23 @@ def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_imag
         temp_frame_path: Path to save temporary frame
         temp_ascii_path: Path to save temporary ASCII result
         num_sub_images_width: Number of sub-images in x dimension (controls resolution)
+        ascii_images_dir: Directory containing ASCII character images
         
     Returns:
         ASCII art frame as grayscale image
     """
+    # Set default ascii_images_dir if not provided
+    if ascii_images_dir is None:
+        current_dir = os.path.dirname(__file__)
+        ascii_images_dir = os.path.join(current_dir, 'ascii_images')
+    
     # Save frame temporarily
     cv2.imwrite(temp_frame_path, frame)
     
     # Generate ASCII art using existing function
     ascii_art = generate_ascii_art(
         image_path=temp_frame_path,
-        ascii_images_dir='ascii_art_generator\\ascii_images',
+        ascii_images_dir=ascii_images_dir,
         num_sub_images_width=num_sub_images_width,
         output_path=temp_ascii_path,
         plot_enabled=False,
@@ -39,7 +45,7 @@ def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_imag
     return ascii_art
 
 def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, end_time=None, 
-                          num_sub_images_width=100, speed_multiplier=1.0, ascii_images_dir="ascii_art_generator\\ascii_images"):
+                          num_sub_images_width=100, speed_multiplier=1.0, ascii_images_dir=None):
     """
     Convert a video to ASCII art video.
     Args:
@@ -49,10 +55,16 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
         end_time (float): End time in seconds (default: None - full video)
         num_sub_images_width (int): ASCII resolution - lower = more pixelated, higher = more detailed (default: 100)
         speed_multiplier (float): Speed multiplier - 1.0 = normal, 2.0 = 2x speed, 0.5 = slow motion (default: 1.0)
-        ascii_images_dir (str): Directory containing ASCII character images (default: "ascii_art_generator\\ascii_images")
+        ascii_images_dir (str): Directory containing ASCII character images (default: package ascii_images)
     Returns:
         bool: True if successful, False otherwise
     """
+    
+    # Set default ascii_images_dir if not provided
+    if ascii_images_dir is None:
+        current_dir = os.path.dirname(__file__)
+        ascii_images_dir = os.path.join(current_dir, 'ascii_images')
+    
     assert speed_multiplier >= 1.0, "Speed multiplier must be greater than 1.0. Slowing down videos is not supported."
     assert num_sub_images_width > 0, "num_sub_images_width must be greater than 0"
     assert os.path.exists(input_video_path), f"Input video file does not exist: {input_video_path}"
@@ -120,7 +132,8 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
                 frame, 
                 temp_frame_path,
                 temp_ascii_path,
-                num_sub_images_width
+                num_sub_images_width,
+                ascii_images_dir
             )
 
             # Write the ASCII frame to output video

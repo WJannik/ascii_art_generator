@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "ascii_art_generator"
 version = "0.1.0"
@@ -13,7 +17,11 @@ dependencies = [
     "pillow>=8.0.0",
     "tqdm>=4.0.0",
     "pytest>=6.0.0",
+    "ipykernel>=5.3.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.uv]
 # Optional: tell uv to use the current environment

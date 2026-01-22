@@ -12,7 +12,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/WJannik/ascii_art_generator",
-    packages=find_packages(),
+    packages=find_packages(where="src"),
+    package_dir={"": "src"},
     python_requires=">=3.7",
     install_requires=[
         "opencv-python>=4.5.0",
@@ -20,6 +21,7 @@ setup(
         "matplotlib>=3.3.0",
         "Pillow>=8.0.0",
         "tqdm>=4.60.0",
+        "ipykernel>=5.3.0",
     ],
     include_package_data=True,
     package_data={

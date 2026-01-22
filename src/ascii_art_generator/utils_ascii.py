@@ -133,17 +133,22 @@ def monospace_char_image(char, font_name = None, font_size=32, out_path="char.pn
         return None
 
 
-def generate_ascii_images(start_code=32, end_code=126, output_dir="ascii_images", font_name = None, font_size=32):
+def generate_ascii_images(start_code=32, end_code=126, output_dir=None, font_name = None, font_size=32):
     """
     Generate images for a range of ASCII characters.
     All images will have consistent dimensions.
     Args:
         start_code: Starting ASCII code (default 32, space)
         end_code: Ending ASCII code (default 126, ~)
-        output_dir: Directory to save images (default "ascii_images")
+        output_dir: Directory to save images (default package ascii_images directory)
         font_name: Name of the font to use (default None, random monospace font)
         font_size: Font size to use for all characters
     """
+    
+    # Set default output directory if not provided
+    if output_dir is None:
+        current_dir = os.path.dirname(__file__)
+        output_dir = os.path.join(current_dir, "ascii_images")
     import os
     
     # Create output directory if it doesn't exist

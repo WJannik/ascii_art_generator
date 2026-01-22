@@ -11,5 +11,6 @@ dependencies:
   - tqdm>=4.0.0
   - pytest>=6.0.0
   - pip
+  - ipykernel>=5.3.0
   - pip:
     - opencv-python>=4.0.0
