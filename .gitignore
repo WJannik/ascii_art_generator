@@ -5,4 +5,4 @@
 uv.lock
 .env
 .pytest_cache/
-ascii_art_generator.egg-info
+*.egg-info/

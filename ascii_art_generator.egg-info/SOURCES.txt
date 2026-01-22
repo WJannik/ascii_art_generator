@@ -1,9 +1,0 @@
-README.md
-pyproject.toml
-setup.py
-ascii_art_generator.egg-info/PKG-INFO
-ascii_art_generator.egg-info/SOURCES.txt
-ascii_art_generator.egg-info/dependency_links.txt
-ascii_art_generator.egg-info/requires.txt
-ascii_art_generator.egg-info/top_level.txt
-test/test_utils_ascii.py
