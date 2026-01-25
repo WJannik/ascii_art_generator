@@ -22,6 +22,7 @@ setup(
         "Pillow>=8.0.0",
         "tqdm>=4.60.0",
         "ipykernel>=5.3.0",
+        "ffmpeg-python>=0.2.0",
     ],
     include_package_data=True,
     package_data={

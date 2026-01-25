@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import os
+import tempfile
+import time
 from tqdm import tqdm
 
 from .ascii_art_generator_image import generate_ascii_art
@@ -26,21 +28,39 @@ def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_imag
         current_dir = os.path.dirname(__file__)
         ascii_images_dir = os.path.join(current_dir, 'ascii_images')
     
-    # Save frame temporarily
-    cv2.imwrite(temp_frame_path, frame)
+    # Save frame temporarily with error checking
+    success = cv2.imwrite(temp_frame_path, frame)
+    if not success:
+        raise ValueError(f"Failed to save temporary frame: {temp_frame_path}")
     
-    # Generate ASCII art using existing function
-    ascii_art = generate_ascii_art(
-        image_path=temp_frame_path,
-        ascii_images_dir=ascii_images_dir,
-        num_sub_images_width=num_sub_images_width,
-        output_path=temp_ascii_path,
-        plot_enabled=False,
-        save_enabled=False,
-        generate_ascii_images_flag=False
-    )
-    cv2.imwrite(temp_ascii_path, ascii_art)
-    return ascii_art
+    # Verify the file was actually created and is readable
+    if not os.path.exists(temp_frame_path):
+        raise ValueError(f"Temporary frame file was not created: {temp_frame_path}")
+    
+    try:
+        # Test if we can read the file immediately
+        test_image = cv2.imread(temp_frame_path)
+        if test_image is None:
+            raise ValueError(f"Cannot read temporary frame file: {temp_frame_path}")
+        
+        # Generate ASCII art using existing function
+        ascii_art = generate_ascii_art(
+            image_path=temp_frame_path,
+            ascii_images_dir=ascii_images_dir,
+            num_sub_images_width=num_sub_images_width,
+            output_path=temp_ascii_path,
+            plot_enabled=False,
+            save_enabled=False,
+            generate_ascii_images_flag=False
+        )
+        cv2.imwrite(temp_ascii_path, ascii_art)
+        return ascii_art
+    
+    except Exception as e:
+        # Clean up temp file in case of error
+        if os.path.exists(temp_frame_path):
+            os.remove(temp_frame_path)
+        raise e
 
 def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, end_time=None, 
                           num_sub_images_width=100, speed_multiplier=1.0, ascii_images_dir=None,
@@ -92,9 +112,10 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
     if end_time is None:
         end_time = total_frames / fps
     
-    # Create temporary file paths for frame processing
-    temp_frame_path = "temp_frame.png"
-    temp_ascii_path = "temp_ascii.png"
+    # Create unique temporary file paths for frame processing to avoid conflicts
+    timestamp = int(time.time() * 1000000)  # microsecond timestamp
+    temp_frame_path = f"temp_frame_{timestamp}.png"
+    temp_ascii_path = f"temp_ascii_{timestamp}.png"
     
     # Calculate start and end frame numbers
     start_frame = int(start_time * fps)

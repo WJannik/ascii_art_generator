@@ -67,22 +67,7 @@ pip install -e .
 
 3. The project comes with pre-generated ASCII character images. The tutorial will guide you through generating them if needed.
 
-
-## Project Structure
-
-```
-ascii_art_generator/
-├── README.md
-├── ascii_art_generator/
-│   ├── ascii_art_generator_image.py    # Main image processing module
-│   ├── ascii_art_generator_video.py    # Video processing module
-│   ├── utils_ascii.py                  # ASCII character utilities
-│   ├── utils_compute_stats.py          # Brightness analysis utilities
-│   └── ascii_images/                   # Pre-generated ASCII character images
-├── example_images/                     # Sample images for testing
-├── example_videos/                     # Sample videos for testing
-└── output/                            # Generated ASCII art output
-```
+For video compression, ensure you have `ffmpeg` installed on your system. Otherwise video processing is done with openCV only.
 
 ## Tips for Best Results
 
@@ -90,4 +75,4 @@ ascii_art_generator/
 2. **Resolution**: Start with `num_sub_images_width=100-200` for testing
 3. **Character Enhancement**: Increase `kernel_size` and `iterations` to finetune the matching of the characters.
 4. **Performance**: Video processing can be slow; consider shorter clips rather than long videos.
-
+5. **FFmpeg Installation**: For video compression and processing, ensure `ffmpeg` is installed on your system and accessible in your system's PATH.
