@@ -1,4 +1,3 @@
-# I want to analyse all images in ascii_images directory
 import os
 import matplotlib.pyplot as plt
 import numpy as np

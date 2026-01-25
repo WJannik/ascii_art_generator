@@ -4,13 +4,9 @@ import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
 
-# Handle both relative and absolute imports
-try:
-    from .utils_ascii import generate_ascii_images
-    from .utils_compute_stats import compute_average_brightness
-except ImportError:
-    from utils_ascii import generate_ascii_images
-    from utils_compute_stats import compute_average_brightness
+from .utils_ascii import generate_ascii_images
+from .utils_compute_stats import compute_average_brightness
+
 
 def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_images_width=200, kernel_size=3, iterations=4,
                        output_path='generated_ascii_art_image.png',plot_enabled =True, save_enabled=True, generate_ascii_images_flag=False):
@@ -54,9 +50,7 @@ def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_imag
     # Preload and pre-scale all ASCII images for better performance
     ascii_images_cache = preload_ascii_images(ascii_images_dir, size_sub_image_width, size_sub_image_height, average_brightness)
     
-    # Create empty ASCII art image with same dimensions as input 
-    # TODO: varying size depeniing on the ascii image size? if the image is low resolution, 
-    # one can fit more ascii characters without losing quality of the characters.
+    # Create empty ASCII art image with same dimensions as input image
     ascii_art_image = np.zeros((height, width), dtype=np.uint8)
 
     # Process each sub-image
@@ -86,10 +80,11 @@ def generate_ascii_art(image_path, ascii_images_dir='ascii_images', num_sub_imag
             # Place the ASCII image into the final image
             ascii_art_image[start_y:end_y, start_x:end_x] = ascii_image_cropped
     
+    # Save the generated ASCII art image
     if save_enabled:
-        # Save the generated ASCII art
         cv2.imwrite(output_path, ascii_art_image)
 
+    # Plotting the original and ASCII art image
     if plot_enabled:
         # Display the result
         plt.subplot(1, 2, 1)
@@ -137,10 +132,6 @@ def preload_ascii_images(ascii_images_dir, size_sub_image_width, size_sub_image_
         ascii_image_resized = cv2.resize(ascii_image, (size_sub_image_width, size_sub_image_height))
         ascii_images_cache[filename] = ascii_image_resized
     return ascii_images_cache
-
-# Example usage - you can uncomment and modify the path as needed
-# image_path = r'path_to_your_image.jpg'
-# ascii_art = generate_ascii_art(image_path)
 
 if __name__ == "__main__":
     # Apply ASCII art generation for some sample images stored in './example_images' directory

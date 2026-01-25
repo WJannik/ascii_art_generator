@@ -3,11 +3,9 @@ import numpy as np
 import os
 from tqdm import tqdm
 
-# Handle both relative and absolute imports
-try:
-    from .ascii_art_generator_image import generate_ascii_art
-except ImportError:
-    from ascii_art_generator_image import generate_ascii_art
+from .ascii_art_generator_image import generate_ascii_art
+from .utils_compression import compress_video
+
 
 def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_images_width=100, ascii_images_dir=None):
     """
@@ -45,7 +43,8 @@ def convert_frame_to_ascii(frame, temp_frame_path, temp_ascii_path, num_sub_imag
     return ascii_art
 
 def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, end_time=None, 
-                          num_sub_images_width=100, speed_multiplier=1.0, ascii_images_dir=None):
+                          num_sub_images_width=100, speed_multiplier=1.0, ascii_images_dir=None,
+                          compress_output=True, compression_level='medium'):
     """
     Convert a video to ASCII art video.
     Args:
@@ -56,6 +55,8 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
         num_sub_images_width (int): ASCII resolution - lower = more pixelated, higher = more detailed (default: 100)
         speed_multiplier (float): Speed multiplier - 1.0 = normal, 2.0 = 2x speed, 0.5 = slow motion (default: 1.0)
         ascii_images_dir (str): Directory containing ASCII character images (default: package ascii_images)
+        compress_output (bool): Whether to compress the output video to reduce file size (default: True)
+        compression_level (str): Compression level - 'low', 'medium', 'high' (default: 'medium')
     Returns:
         bool: True if successful, False otherwise
     """
@@ -113,6 +114,7 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
     # Process each frame with progress bar
     progress_bar = tqdm(total=end_frame-start_frame, desc="Converting frames", unit="frames")
     
+    success = False
     try:
         while frame_count <= end_frame:
             ret, frame = cap.read()
@@ -144,11 +146,11 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
             progress_bar.update(1)
         
         progress_bar.close()
-        return True
+        success = True
         
     except Exception as e:
         print(f"Error during video processing: {e}")
-        return False
+        success = False
         
     finally:
         # Release resources
@@ -160,14 +162,45 @@ def convert_video_to_ascii(input_video_path, output_video_path, start_time=0.0, 
             os.remove(temp_frame_path)
         if os.path.exists(temp_ascii_path):
             os.remove(temp_ascii_path)
+    
+    # Compress the output video if requested (after resources are released)
+    if success and compress_output and os.path.exists(output_video_path):
+        try:
+            # Get original file size before compression
+            original_size = os.path.getsize(output_video_path)
+            
+            compressed_path = compress_video(
+                input_path=output_video_path,
+                compression_level=compression_level
+            )
+            
+            if compressed_path and os.path.exists(compressed_path):
+                # Get compressed file size
+                compressed_size = os.path.getsize(compressed_path)
+                
+                # Calculate savings
+                size_saved = original_size - compressed_size
+                percentage_saved = (size_saved / original_size) * 100 if original_size > 0 else 0
+                
+                # Replace original with compressed version
+                if os.path.exists(output_video_path):
+                    os.remove(output_video_path)
+                os.rename(compressed_path, output_video_path)
+                
+                # Print compression results
+                print(f"Original size: {original_size / (1024*1024):.2f} MB → Compressed size: {compressed_size / (1024*1024):.2f} MB")
+            else:
+                print("Compression failed, keeping original video")
+        except Exception as e:
+            print(f"Compression error: {e}, keeping original video")
+    
+    return success
 
 # Example usage
 if __name__ == "__main__":
     # Example 1: Convert entire video with default settings
     input_video = r"example_videos\7098041-uhd_3840_2160_30fps.mp4"
     output_video = r"output\7098041-uhd_3840_2160_30fps_ascii.mp4"
-    input_video = r"example_videos\2795731-uhd_3840_2160_25fps.mp4"
-    output_video = r"output\2795731-uhd_3840_2160_25fps_ascii.mp4"
 
     success = convert_video_to_ascii(
          input_video_path=input_video,
